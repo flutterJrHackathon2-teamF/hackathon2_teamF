@@ -1,0 +1,47 @@
+# AI/ML related files and directories
+.codex/
+.kiro/
+
+# Common AI/ML model files
+*.h5
+*.pb
+*.tflite
+*.onnx
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.model
+*.weights
+*.bin
+
+# AI/ML training data and logs
+data/
+datasets/
+logs/
+tensorboard/
+wandb/
+mlruns/
+.mlflow/
+
+# Python AI/ML cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Common system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
