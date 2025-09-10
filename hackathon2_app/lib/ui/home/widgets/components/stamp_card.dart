@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import '../../../../utils/color.dart';
 import '../../../../gen/assets.gen.dart';
 
@@ -10,37 +11,44 @@ class StampCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      color: AppColor.card, // 背景の緑
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5, // 横に5個
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-        ),
-        itemCount: total,
-        itemBuilder: (context, index) {
-          final isStamped = index < stamped;
-          return Container(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          color: AppColor.card, // 背景の緑
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5, // 横に5個
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
             ),
-            child:
-                isStamped
-                    ? Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Assets.images.yu.image(
-                        fit: BoxFit.contain,
-                      ),
-                    )
-                    : null,
-          );
-        },
-      ),
+            itemCount: total,
+            itemBuilder: (context, index) {
+              final isStamped = index < stamped;
+              return Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                child:
+                    isStamped
+                        ? Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Assets.images.yu.image(fit: BoxFit.contain),
+                        )
+                        : null,
+              );
+            },
+          ),
+        ),
+        Gap(2),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(' $stamped / 10', style: TextStyle(fontSize: 20)),
+        ),
+      ],
     );
   }
 }

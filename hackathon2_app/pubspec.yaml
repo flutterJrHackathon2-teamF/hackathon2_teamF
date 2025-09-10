@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  gap: ^3.0.1
+  webview_flutter: ^4.4.2
 
 dev_dependencies:
   flutter_test:
