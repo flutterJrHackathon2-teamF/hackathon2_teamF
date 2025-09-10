@@ -12,6 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   gap: ^3.0.1
   webview_flutter: ^4.4.2
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:

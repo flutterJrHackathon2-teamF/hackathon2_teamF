@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hackathon2_app/utils/color.dart';
 
 class HourlyBarChart extends StatelessWidget {
-  HourlyBarChart({super.key});
+  const HourlyBarChart({super.key});
 
   final List<int> mock = const [
     12,
