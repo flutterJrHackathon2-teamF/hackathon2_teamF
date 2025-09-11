@@ -13,6 +13,17 @@ dependencies:
   gap: ^3.0.1
   webview_flutter: ^4.4.2
   url_launcher: ^6.1.10
+  # State management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.4
+  # Data persistence
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  # Location services
+  geolocator: ^10.1.0
+  # Code generation
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
@@ -20,6 +31,11 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_gen_runner: ^5.7.0
   build_runner: ^2.4.13
+  # Code generation
+  riverpod_generator: ^2.3.9
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
+  hive_generator: ^2.0.1
 
 flutter:
   uses-material-design: true
