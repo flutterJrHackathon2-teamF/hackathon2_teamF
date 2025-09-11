@@ -8,17 +8,17 @@ import '../../../data/repositories/location_repository.dart';
 part 'stamp_viewmodel.g.dart';
 
 @Riverpod(keepAlive: true)
-StampRepository stampRepository(StampRepositoryRef ref) {
+StampRepository stampRepository(Ref ref) {
   return HiveStampRepository();
 }
 
 @Riverpod(keepAlive: true)
-LocationRepository locationRepository(LocationRepositoryRef ref) {
+LocationRepository locationRepository(Ref ref) {
   return GeolocatorLocationRepository();
 }
 
 @Riverpod(keepAlive: true)
-StampService stampService(StampServiceRef ref) {
+StampService stampService(Ref ref) {
   return StampService(
     stampRepository: ref.watch(stampRepositoryProvider),
     locationRepository: ref.watch(locationRepositoryProvider),
@@ -66,7 +66,7 @@ class StampViewModel extends _$StampViewModel {
 }
 
 @riverpod
-Future<bool> locationAllowsStamping(LocationAllowsStampingRef ref) async {
+Future<bool> locationAllowsStamping(Ref ref) async {
   final service = ref.watch(stampServiceProvider);
   return await service.canStampAtLocation();
 }

@@ -13,8 +13,14 @@ class StampData with _$StampData {
     @HiveField(2) required DateTime lastUpdated,
   }) = _StampData;
 
+  const StampData._();
+
   factory StampData.fromJson(Map<String, dynamic> json) =>
       _$StampDataFromJson(json);
+
+  // Helper methods
+  int get stampedCount => stampStatus.where((isStamped) => isStamped == true).length;
+  bool get isComplete => stampedCount == totalStamps;
 }
 
 @freezed

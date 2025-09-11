@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import '../../../../utils/color.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../viewmodels/stamp_viewmodel.dart';
+import '../../../../data/models/stamp_data.dart';
 
 class StampCard extends ConsumerWidget {
   const StampCard({super.key});
@@ -23,11 +24,10 @@ class StampCard extends ConsumerWidget {
   Widget _buildStampGrid(
     BuildContext context,
     WidgetRef ref,
-    data,
+    StampData data,
     AsyncValue<bool> canStamp,
   ) {
-    final stampedCount =
-        data.stampStatus.where((isStamped) => isStamped).length;
+    final stampedCount = data.stampedCount;
     final isLocationAllowed = canStamp.valueOrNull ?? false;
 
     return Column(
@@ -53,12 +53,11 @@ class StampCard extends ConsumerWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color:
-                        isStamped
+                    color: isStamped
+                        ? Colors.white
+                        : (isLocationAllowed
                             ? Colors.white
-                            : (canTapStamp
-                                ? Colors.white
-                                : Colors.grey.shade300),
+                            : AppColor.primaryGray),
                   ),
                   child:
                       isStamped

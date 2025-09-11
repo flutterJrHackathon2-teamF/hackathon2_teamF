@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hackathon2_app/utils/color.dart';
+import '../../viewmodels/stamp_viewmodel.dart';
 
-class HomeScreenButtons extends StatelessWidget {
+class HomeScreenButtons extends ConsumerWidget {
   const HomeScreenButtons({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final canStamp = ref.watch(locationAllowsStampingProvider);
+    final isLocationAllowed = canStamp.valueOrNull ?? false;
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _Button(
-            color: AppColor.primaryRed,
+            color: isLocationAllowed ? AppColor.primaryRed : AppColor.primaryGray,
             text: 'スタンプ\nゲット！',
-            onPressed: () {},
+            onPressed: isLocationAllowed ? () {} : null,
           ),
-          _Button(color: AppColor.blue, text: 'スタンプを\n交換する', onPressed: () {}),
+          _Button(
+            color: isLocationAllowed ? AppColor.blue : AppColor.primaryGray,
+            text: 'スタンプを\n交換する',
+            onPressed: isLocationAllowed ? () {} : null,
+          ),
         ],
       ),
     );
@@ -26,7 +35,7 @@ class HomeScreenButtons extends StatelessWidget {
 class _Button extends StatelessWidget {
   final Color color;
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const _Button({
     required this.color,
