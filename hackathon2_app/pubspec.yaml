@@ -16,6 +16,9 @@ dependencies:
   # State management
   flutter_riverpod: ^2.4.9
   riverpod_annotation: ^2.3.4
+  # Hooks
+  flutter_hooks: ^0.20.5
+  hooks_riverpod: ^2.4.9
   # Data persistence
   hive: ^2.2.3
   hive_flutter: ^1.1.0
