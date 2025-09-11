@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import '../../../../utils/color.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../../presentation/viewmodels/stamp_viewmodel.dart';
+import '../../viewmodels/stamp_viewmodel.dart';
 
 class StampCard extends ConsumerWidget {
   const StampCard({super.key});
@@ -20,8 +20,14 @@ class StampCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildStampGrid(BuildContext context, WidgetRef ref, data, AsyncValue<bool> canStamp) {
-    final stampedCount = data.stampStatus.where((isStamped) => isStamped).length;
+  Widget _buildStampGrid(
+    BuildContext context,
+    WidgetRef ref,
+    data,
+    AsyncValue<bool> canStamp,
+  ) {
+    final stampedCount =
+        data.stampStatus.where((isStamped) => isStamped).length;
     final isLocationAllowed = canStamp.valueOrNull ?? false;
 
     return Column(
@@ -47,18 +53,22 @@ class StampCard extends ConsumerWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isStamped 
-                        ? Colors.white 
-                        : (canTapStamp ? Colors.white : Colors.grey.shade300),
+                    color:
+                        isStamped
+                            ? Colors.white
+                            : (canTapStamp
+                                ? Colors.white
+                                : Colors.grey.shade300),
                   ),
-                  child: isStamped
-                      ? Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Assets.images.yu.image(fit: BoxFit.contain),
-                        )
-                      : (canTapStamp 
-                          ? Icon(Icons.add, color: Colors.grey.shade600)
-                          : Icon(Icons.lock, color: Colors.grey.shade500)),
+                  child:
+                      isStamped
+                          ? Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Assets.images.yu.image(fit: BoxFit.contain),
+                          )
+                          : (canTapStamp
+                              ? Icon(Icons.add, color: Colors.grey.shade600)
+                              : Icon(Icons.lock, color: Colors.grey.shade500)),
                 ),
               );
             },
@@ -67,18 +77,17 @@ class StampCard extends ConsumerWidget {
         Gap(2),
         Align(
           alignment: Alignment.centerLeft,
-          child: Text(' $stampedCount / ${data.totalStamps}', 
-                     style: TextStyle(fontSize: 20)),
+          child: Text(
+            ' $stampedCount / ${data.totalStamps}',
+            style: TextStyle(fontSize: 20),
+          ),
         ),
         if (!isLocationAllowed)
           Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
               '指定エリア内でスタンプを押せます',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
           ),
       ],
@@ -89,9 +98,7 @@ class StampCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       color: AppColor.card,
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -100,17 +107,16 @@ class StampCard extends ConsumerWidget {
       padding: const EdgeInsets.all(16),
       color: AppColor.card,
       child: Center(
-        child: Text(
-          'エラーが発生しました: $error',
-          style: TextStyle(color: Colors.red),
-        ),
+        child: Text('エラーが発生しました: $error', style: TextStyle(color: Colors.red)),
       ),
     );
   }
 
   Future<void> _onStampTap(WidgetRef ref, int index) async {
-    final success = await ref.read(stampViewModelProvider.notifier).attemptStamp(index);
-    
+    final success = await ref
+        .read(stampViewModelProvider.notifier)
+        .attemptStamp(index);
+
     if (!success) {
       // Could show a snackbar or toast here for failed attempts
       print('スタンプの押下に失敗しました');

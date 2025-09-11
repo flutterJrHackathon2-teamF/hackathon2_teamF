@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../data/models/stamp_data.dart';
-import '../../domain/services/stamp_service.dart';
-import '../../data/repositories/stamp_repository.dart';
-import '../../data/repositories/location_repository.dart';
+import '../../../data/models/stamp_data.dart';
+import '../../../domain/services/stamp_service.dart';
+import '../../../data/repositories/stamp_repository.dart';
+import '../../../data/repositories/location_repository.dart';
 
 part 'stamp_viewmodel.g.dart';
 
@@ -49,12 +49,12 @@ class StampViewModel extends _$StampViewModel {
   Future<bool> attemptStamp(int stampIndex) async {
     final service = ref.read(stampServiceProvider);
     final success = await service.attemptStamp(stampIndex);
-    
+
     if (success) {
       // Refresh the data after successful stamp
       await refreshStampData();
     }
-    
+
     return success;
   }
 
