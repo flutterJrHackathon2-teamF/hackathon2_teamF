@@ -6,7 +6,7 @@ part of 'stamp_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$stampRepositoryHash() => r'bb26ad1871599a0313fd84a15e99a1df7f52abc2';
+String _$stampRepositoryHash() => r'969e5791f814d546eac1a83cef92dfb8d1ad7943';
 
 /// See also [stampRepository].
 @ProviderFor(stampRepository)
@@ -24,7 +24,7 @@ final stampRepositoryProvider = Provider<StampRepository>.internal(
 // ignore: unused_element
 typedef StampRepositoryRef = ProviderRef<StampRepository>;
 String _$locationRepositoryHash() =>
-    r'53082970080a1255b631cc6a6bf8470bddec9358';
+    r'c3f66a793ef6882d37a8cdf5b37842008ec2e65e';
 
 /// See also [locationRepository].
 @ProviderFor(locationRepository)
@@ -41,7 +41,7 @@ final locationRepositoryProvider = Provider<LocationRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocationRepositoryRef = ProviderRef<LocationRepository>;
-String _$stampServiceHash() => r'5297c75f35c8096dd0a7b8b656e8d3f7b334e412';
+String _$stampServiceHash() => r'f7ce20905917153f77ed85bdacf22be510c684a1';
 
 /// See also [stampService].
 @ProviderFor(stampService)
@@ -58,7 +58,7 @@ final stampServiceProvider = Provider<StampService>.internal(
 // ignore: unused_element
 typedef StampServiceRef = ProviderRef<StampService>;
 String _$locationAllowsStampingHash() =>
-    r'ef44a616b4b74d7689d41647f6faf73a072671d7';
+    r'746a707a2b44e73cfa169b4a503add121d0aa015';
 
 /// See also [locationAllowsStamping].
 @ProviderFor(locationAllowsStamping)

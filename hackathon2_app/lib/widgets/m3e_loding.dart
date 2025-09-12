@@ -1,28 +1,38 @@
-import 'dart:io';
-
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ExpressiveLoading extends StatelessWidget {
-  const ExpressiveLoading({super.key});
+  final Color? color;
+  final double size;
+  final double? progress;
+
+  const ExpressiveLoading({
+    super.key,
+    this.color,
+    this.size = 48.0,
+    this.progress,
+  });
+
   @override
   Widget build(BuildContext context) {
-    if (Platform.isAndroid) {
-      return SizedBox(
-        height: 100,
-        width: 100,
-        child: AndroidView(
-          viewType: 'custom_native_view',
-          layoutDirection: TextDirection.ltr,
-        ),
-      );
-    } else {
-      return const SizedBox(
-        height: 100,
-        width: 100,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+    if (!kIsWeb && Platform.isAndroid) {
+      return AndroidView(
+        viewType: 'expressive_loading',
+        layoutDirection: TextDirection.ltr,
+        creationParams: <String, dynamic>{
+          'color': (color ?? Theme.of(context).colorScheme.primary).value,
+          'size': size,
+          'progress': progress,
+        },
+        creationParamsCodec: const StandardMessageCodec(),
       );
     }
+    // iOS/Web fallback
+    return CircularProgressIndicator(
+      value: progress,
+      color: color,
+    );
   }
 }
