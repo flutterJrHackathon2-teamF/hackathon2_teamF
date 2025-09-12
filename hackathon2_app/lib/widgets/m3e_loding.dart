@@ -22,7 +22,7 @@ class ExpressiveLoading extends StatelessWidget {
         viewType: 'expressive_loading',
         layoutDirection: TextDirection.ltr,
         creationParams: <String, dynamic>{
-          'color': (color ?? Theme.of(context).colorScheme.primary).value,
+          'color': (color ?? Theme.of(context).colorScheme.primary),
           'size': size,
           'progress': progress,
         },
@@ -30,9 +30,6 @@ class ExpressiveLoading extends StatelessWidget {
       );
     }
     // iOS/Web fallback
-    return CircularProgressIndicator(
-      value: progress,
-      color: color,
-    );
+    return CircularProgressIndicator(value: progress, color: color);
   }
 }
