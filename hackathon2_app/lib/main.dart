@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hackathon2_app/data/models/stamp_data.dart';
-import 'package:hackathon2_app/presentation/home/widgets/screen.dart';
+import 'package:hackathon2_app/router/app_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -21,12 +21,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const HomeScreen(),
+      routerConfig: AppRouter.router,
     );
   }
 }

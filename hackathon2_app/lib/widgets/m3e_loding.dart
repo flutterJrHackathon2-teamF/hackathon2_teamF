@@ -22,7 +22,7 @@ class ExpressiveLoading extends StatelessWidget {
         viewType: 'expressive_loading',
         layoutDirection: TextDirection.ltr,
         creationParams: <String, dynamic>{
-          'color': (color ?? Theme.of(context).colorScheme.primary),
+          'color': (color ?? Theme.of(context).colorScheme.primary.value),
           'size': size,
           'progress': progress,
         },
