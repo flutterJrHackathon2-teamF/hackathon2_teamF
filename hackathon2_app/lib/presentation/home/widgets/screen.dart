@@ -5,8 +5,6 @@ import 'package:hackathon2_app/presentation/home/widgets/components/hourly_chart
 import 'package:hackathon2_app/presentation/home/widgets/components/twitter_post.dart';
 import 'package:hackathon2_app/utils/color.dart';
 
-import '../../../widgets/m3e_loding.dart';
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -18,7 +16,6 @@ class HomeScreen extends StatelessWidget {
         child: ListView(
           children: [
             Assets.images.fuji.image(),
-            Center(child: ExpressiveLoading(size: 48)),
             // const Gap(12),
             // const StampCard(),
             // const Gapx(24),
