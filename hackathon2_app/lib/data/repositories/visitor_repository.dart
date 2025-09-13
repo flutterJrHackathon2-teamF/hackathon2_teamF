@@ -47,6 +47,11 @@ class VisitorRepositoryImpl implements VisitorRepository {
 
   @override
   Future<VisitorData?> getLatestVisitorData() async {
+    // Restrict data retrieval to business hours (14:00–24:00 local time)
+    if (!_isBusinessHours(DateTime.now())) {
+      // Outside business hours: do not fetch and do not return cached data
+      return null;
+    }
     final cachedData = ref.read(visitorRepositoryCacheProvider);
     if (cachedData != null) {
       return cachedData;
@@ -66,12 +71,21 @@ class VisitorRepositoryImpl implements VisitorRepository {
 
   @override
   String getVisitorStatusMessage(int visitorCount) {
-    if (visitorCount < 50) {
+    if (!_isBusinessHours(DateTime.now())) {
+      return "営業時間外です";
+    }
+    if (visitorCount < 20) {
       return "空いています";
-    } else if (visitorCount < 100) {
+    } else if (visitorCount < 60) {
       return "やや混雑しています";
     } else {
       return "混雑しています";
     }
+  }
+
+  bool _isBusinessHours(DateTime now) {
+    // Business hours: 14:00 inclusive to 24:00 exclusive (i.e., until 23:59)
+    final hour = now.hour; // 0–23
+    return hour >= 14 && hour < 24;
   }
 }
