@@ -1,30 +1,33 @@
-// This is a paste-ready widget for your project.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hackathon2_app/utils/color.dart';
+import 'package:hackathon2_app/presentation/home/viewmodels/prediction_viewmodel.dart';
 
-class HourlyBarChart extends StatelessWidget {
+class HourlyBarChart extends ConsumerWidget {
   const HourlyBarChart({super.key});
 
-  final List<int> mock = const [
-    12,
-    20,
-    16,
-    18,
-    15,
-    50,
-    22,
-    5,
-    8,
-    12,
-    10,
-  ]; // 14:00..24:00 (11 slots)
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
     final currentHour = now.hour; // 0-23
-    final labels = List<String>.generate(11, (i) => '${14 + i}:00~');
+    final labels = List<String>.generate(10, (i) => '${14 + i}:00~');
 
+    final predictionAsyncValue = ref.watch(predictionViewModelProvider);
+
+    return predictionAsyncValue.when(
+      data: (data) {
+        if (data == null || data.isEmpty) {
+          return _buildErrorMessage('予測データが取得できませんでした');
+        }
+        final values = data.map((prediction) => prediction.visitors).toList();
+        return _buildChart(values, labels, currentHour);
+      },
+      loading: () => _buildLoadingMessage(),
+      error: (_, __) => _buildErrorMessage('予測データの取得に失敗しました'),
+    );
+  }
+
+  Widget _buildChart(List<double> values, List<String> labels, int currentHour) {
     return Container(
       color: const Color(0xFFEFF5F8),
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -34,14 +37,14 @@ class HourlyBarChart extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: List.generate(labels.length, (i) {
-            final hour = 14 + i; // 14..24
+            final hour = 14 + i; // 14..23
             final isCurrent = currentHour == hour;
-            final value = mock[i].toDouble();
+            final value = values[i];
 
             // 最大高さをベースにスケールするが、
             // 現在の時間帯の棒だけは高さを少し余裕をもって調整する
             final maxBarHeight = 200.0; // ラベル分を確保した最大値
-            final maxValue = mock.reduce((a, b) => a > b ? a : b).toDouble();
+            final maxValue = values.reduce((a, b) => a > b ? a : b);
 
             double barHeight = (value / maxValue) * maxBarHeight;
 
@@ -75,6 +78,32 @@ class HourlyBarChart extends StatelessWidget {
               ),
             );
           }),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingMessage() {
+    return Container(
+      color: const Color(0xFFEFF5F8),
+      height: 240,
+      child: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _buildErrorMessage(String message) {
+    return Container(
+      color: const Color(0xFFEFF5F8),
+      height: 240,
+      child: Center(
+        child: Text(
+          message,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
         ),
       ),
     );

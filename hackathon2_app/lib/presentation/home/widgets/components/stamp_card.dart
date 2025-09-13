@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -120,7 +122,7 @@ class StampCard extends ConsumerWidget {
 
     if (!success) {
       // Could show a snackbar or toast here for failed attempts
-      print('スタンプの押下に失敗しました');
+      log('スタンプの押下に失敗しました');
     }
   }
 }

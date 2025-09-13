@@ -26,6 +26,12 @@ dependencies:
   json_annotation: ^4.8.1
   # Navigation
   go_router: ^14.6.2
+  # Supabase
+  supabase_flutter: ^2.5.6
+  # Environment variables
+  flutter_dotenv: ^5.1.0
+  # HTTP client
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -43,3 +49,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - .env
