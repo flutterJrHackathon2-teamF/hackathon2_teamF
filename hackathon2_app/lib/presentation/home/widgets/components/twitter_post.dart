@@ -1,21 +1,32 @@
-import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, Factory;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../utils/color.dart';
+import '../../../../widgets/linear_wavy_progress.dart';
 
-class TwitterTimeline extends StatefulWidget {
-  final String username; // 例: 'TwitterDev'（@は付けない）
+class SocialMediaEmbed extends StatefulWidget {
+  final String url; // 表示するURL
   final bool dark; // ダークテーマにしたい場合 true
+  final String title; // 表示タイトル
 
-  const TwitterTimeline({super.key, required this.username, this.dark = false});
+  const SocialMediaEmbed({
+    super.key, 
+    required this.url, 
+    this.dark = false,
+    this.title = 'Social Media'
+  });
 
   @override
-  State<TwitterTimeline> createState() => _TwitterTimelineState();
+  State<SocialMediaEmbed> createState() => _SocialMediaEmbedState();
 }
 
-class _TwitterTimelineState extends State<TwitterTimeline> {
+class _SocialMediaEmbedState extends State<SocialMediaEmbed> {
   WebViewController? _controller;
   bool isLoading = true;
   bool hasError = false;
@@ -33,12 +44,7 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS);
 
-    print('TwitterTimeline: Platform supported: $isSupportedPlatform');
-    print('TwitterTimeline: Current platform: $defaultTargetPlatform');
-    print('TwitterTimeline: Is Web: $kIsWeb');
-
     if (!isSupportedPlatform) {
-      print('TwitterTimeline: Platform not supported, showing fallback');
       return;
     }
     _controller =
@@ -52,32 +58,35 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
           ..setNavigationDelegate(
             NavigationDelegate(
               onPageStarted: (url) {
-                print('TwitterTimeline: Page started loading: $url');
                 setState(() {
                   isLoading = true;
                   hasError = false;
                 });
               },
               onPageFinished: (url) {
-                print('TwitterTimeline: Page finished loading: $url');
                 setState(() {
                   isLoading = false;
                 });
-                // Improve scroll behavior
+                // Improve scroll behavior and touch handling
                 _controller?.runJavaScript(r"""
                   document.documentElement.style.overscrollBehavior = 'contain';
                   document.body.style.overscrollBehavior = 'contain';
+                  document.documentElement.style.touchAction = 'pan-y';
+                  document.body.style.touchAction = 'pan-y';
+                  document.documentElement.style.webkitOverflowScrolling = 'touch';
+                  document.body.style.webkitOverflowScrolling = 'touch';
                 """);
               },
               onWebResourceError: (error) {
-                print('TwitterTimeline: WebView error: ${error.description}');
-                print('TwitterTimeline: Error code: ${error.errorCode}');
                 if (!_useMobileFallback) {
-                  print('TwitterTimeline: Trying mobile fallback');
                   _useMobileFallback = true;
-                  _controller?.loadRequest(
-                    Uri.parse('https://mobile.twitter.com/${widget.username}'),
-                  );
+                  // Try mobile fallback if it's Twitter/X
+                  if (widget.url.contains('x.com') || widget.url.contains('twitter.com')) {
+                    final username = widget.url.split('/').last;
+                    _controller?.loadRequest(
+                      Uri.parse('https://mobile.twitter.com/$username'),
+                    );
+                  }
                 } else {
                   setState(() {
                     isLoading = false;
@@ -92,13 +101,12 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
                   return NavigationDecision.navigate;
                 }
                 // Handle non-http(s) schemes like intent://, twitter://, mailto:, tel:, etc.
-                print('TwitterTimeline: Intercept non-http(s) url => $url');
                 _handleExternalUrl(url);
                 return NavigationDecision.prevent;
               },
             ),
           )
-          ..loadRequest(Uri.parse('https://x.com/${widget.username}'));
+          ..loadRequest(Uri.parse(widget.url));
   }
 
   Future<void> _handleExternalUrl(String raw) async {
@@ -124,7 +132,7 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      print('TwitterTimeline: launch external url failed: $e');
+      log('TwitterTimeline: launch external url failed: $e');
     }
   }
 
@@ -146,7 +154,7 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            final profileUrl = Uri.parse('https://x.com/${widget.username}');
+            final profileUrl = Uri.parse(widget.url);
             launchUrl(profileUrl, mode: LaunchMode.externalApplication);
           },
           child: Center(
@@ -156,13 +164,14 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
                 const Icon(Icons.open_in_browser, size: 48, color: Colors.grey),
                 const SizedBox(height: 16),
                 Text(
-                  'X (Twitter) Timeline',
+                  widget.title,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '@${widget.username}',
+                  widget.url,
                   style: TextStyle(fontSize: 16, color: Colors.blue),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -203,13 +212,14 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
                 const Icon(Icons.refresh, color: Colors.orange, size: 48),
                 const SizedBox(height: 16),
                 Text(
-                  'X Timeline Loading Failed',
+                  '${widget.title} Loading Failed',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '@${widget.username}',
+                  widget.url,
                   style: TextStyle(fontSize: 16, color: Colors.blue),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -248,11 +258,36 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
           child: Stack(
             children: [
               if (_controller != null)
-                Positioned.fill(child: WebViewWidget(controller: _controller!)),
+                Positioned.fill(
+                  child: WebViewWidget(
+                    controller: _controller!,
+                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                      Factory<VerticalDragGestureRecognizer>(
+                        () =>
+                            VerticalDragGestureRecognizer()..onUpdate = (_) {},
+                      ),
+                      Factory<HorizontalDragGestureRecognizer>(
+                        () =>
+                            HorizontalDragGestureRecognizer()
+                              ..onUpdate = (_) {},
+                      ),
+                      Factory<TapGestureRecognizer>(
+                        () => TapGestureRecognizer(),
+                      ),
+                    },
+                  ),
+                ),
               if (isLoading)
                 Container(
-                  color: AppColor.white,
-                  child: const Center(child: CircularProgressIndicator()),
+                  color: AppColor.white.withValues(alpha: 0.9),
+                  child: Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: LinearWavyProgressIndicator(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
                 ),
             ],
           ),

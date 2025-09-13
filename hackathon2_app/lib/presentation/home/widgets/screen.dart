@@ -23,7 +23,15 @@ class HomeScreen extends StatelessWidget {
             const Gap(12),
             HourlyBarChart(),
             const Gap(24),
-            const TwitterTimeline(username: 'heiwayu_ikeda'),
+            const SocialMediaEmbed(
+              url: 'https://x.com/heiwayu_ikeda',
+              title: 'X (Twitter) Timeline',
+            ),
+            const Gap(24),
+            const SocialMediaEmbed(
+              url: 'https://www.instagram.com/heiwaonsen/',
+              title: 'Instagram',
+            ),
           ],
         ),
       ),
