@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import '../../../../utils/color.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+import '../../../../utils/color.dart';
 
 class TwitterTimeline extends StatefulWidget {
   final String username; // 例: 'TwitterDev'（@は付けない）
@@ -247,9 +248,7 @@ class _TwitterTimelineState extends State<TwitterTimeline> {
           child: Stack(
             children: [
               if (_controller != null)
-                Positioned.fill(
-                  child: WebViewWidget(controller: _controller!),
-                ),
+                Positioned.fill(child: WebViewWidget(controller: _controller!)),
               if (isLoading)
                 Container(
                   color: AppColor.white,

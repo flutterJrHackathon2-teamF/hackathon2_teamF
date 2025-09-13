@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:hackathon2_app/widgets/m3e_loding.dart';
 import '../../../../utils/color.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../viewmodels/stamp_viewmodel.dart';
@@ -53,11 +54,12 @@ class StampCard extends ConsumerWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isStamped
-                        ? Colors.white
-                        : (isLocationAllowed
+                    color:
+                        isStamped
                             ? Colors.white
-                            : AppColor.primaryGray),
+                            : (isLocationAllowed
+                                ? Colors.white
+                                : AppColor.primaryGray),
                   ),
                   child:
                       isStamped
@@ -97,7 +99,7 @@ class StampCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       color: AppColor.card,
-      child: Center(child: CircularProgressIndicator()),
+      child: Center(child: ExpressiveLoading()),
     );
   }
 

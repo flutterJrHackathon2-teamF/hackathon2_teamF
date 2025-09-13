@@ -8,8 +8,7 @@ plugins {
 android {
     namespace = "com.example.hackathon2_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-
+    ndkVersion = "27.0.12077973"
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -37,6 +36,27 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    buildFeatures {
+        compose = true  // ここを追加
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.8"
+    }
+}
+
+dependencies {
+    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-common:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("androidx.savedstate:savedstate-ktx:1.2.1")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha01")
 }
 
 flutter {
