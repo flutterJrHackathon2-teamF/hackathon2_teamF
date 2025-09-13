@@ -23,23 +23,6 @@ final visitorServiceProvider = Provider<VisitorService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef VisitorServiceRef = ProviderRef<VisitorService>;
-String _$visitorRepositoryHash() => r'267b33c2089889ff6a41b91d99cbf60624ec33c8';
-
-/// See also [visitorRepository].
-@ProviderFor(visitorRepository)
-final visitorRepositoryProvider = Provider<VisitorRepository>.internal(
-  visitorRepository,
-  name: r'visitorRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$visitorRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef VisitorRepositoryRef = ProviderRef<VisitorRepository>;
 String _$latestVisitorCountHash() =>
     r'bbf6621d35f0965754ea1b21ddc718dd94b39954';
 

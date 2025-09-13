@@ -11,13 +11,16 @@ class HomeScreenHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final visitorState = ref.watch(visitorViewModelProvider);
 
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Assets.images.fuji.image(),
-          const SizedBox(height: 16),
-          Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Full-width (edge-to-edge) image
+        Assets.images.fuji.image(width: double.infinity, fit: BoxFit.cover),
+        const SizedBox(height: 16),
+        // Keep padding only for the card area below
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
               color: AppColor.card,
@@ -47,14 +50,12 @@ class HomeScreenHeader extends ConsumerWidget {
                     const SizedBox(height: 4),
                     visitorState.when(
                       data: (data) {
-                        // 判定は ViewModel 経由（Repository 側で営業時間外を考慮）
                         final statusMessage = ref
                             .read(visitorViewModelProvider.notifier)
                             .getVisitorStatusMessage((data?.visitors) ?? 0);
                         final isClosed = statusMessage == '営業時間外です';
 
                         if (isClosed) {
-                          // 営業時間外：人数は表示せず、案内のみ
                           return Column(
                             children: [
                               Text(
@@ -99,7 +100,6 @@ class HomeScreenHeader extends ConsumerWidget {
                           );
                         }
 
-                        // 営業時間内でデータがまだ無い場合
                         return Text(
                           '取得中...',
                           style: TextStyle(
@@ -127,8 +127,8 @@ class HomeScreenHeader extends ConsumerWidget {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
