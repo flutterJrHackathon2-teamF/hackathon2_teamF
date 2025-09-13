@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hackathon2_app/data/models/visitor_prediction.dart';
 import 'package:hackathon2_app/domain/services/prediction_service.dart';
-import 'package:hackathon2_app/presentation/home/viewmodels/prediction_viewmodel.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'prediction_repository.g.dart';
