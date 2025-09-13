@@ -1,16 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../data/models/visitor_data.dart';
 import '../../../domain/services/visitor_service.dart';
 import '../../../data/repositories/visitor_repository.dart';
 
 part 'visitor_viewmodel.g.dart';
-
-@Riverpod(keepAlive: true)
-VisitorService visitorService(Ref ref) {
-  return VisitorService(Supabase.instance.client);
-}
 
 @riverpod
 class VisitorViewModel extends _$VisitorViewModel {

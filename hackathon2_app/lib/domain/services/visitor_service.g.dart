@@ -1,26 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'loading_viewmodel.dart';
+part of 'visitor_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$loadingViewModelHash() => r'3009a18d93cff4ea4aee0b4b76611c7c0da9d85b';
+String _$visitorServiceHash() => r'c9c8b6e0081db7c8e9b774edf9241557eeaef624';
 
-/// See also [LoadingViewModel].
-@ProviderFor(LoadingViewModel)
-final loadingViewModelProvider =
-    AutoDisposeAsyncNotifierProvider<LoadingViewModel, bool>.internal(
-  LoadingViewModel.new,
-  name: r'loadingViewModelProvider',
+/// See also [visitorService].
+@ProviderFor(visitorService)
+final visitorServiceProvider = Provider<VisitorService>.internal(
+  visitorService,
+  name: r'visitorServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$loadingViewModelHash,
+      : _$visitorServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$LoadingViewModel = AutoDisposeAsyncNotifier<bool>;
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef VisitorServiceRef = ProviderRef<VisitorService>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

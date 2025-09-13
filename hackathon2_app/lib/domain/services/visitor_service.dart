@@ -1,5 +1,14 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/visitor_data.dart';
+
+part 'visitor_service.g.dart';
+
+@Riverpod(keepAlive: true)
+VisitorService visitorService(Ref ref) {
+  return VisitorService(Supabase.instance.client);
+}
 
 class VisitorService {
   final SupabaseClient _client;
