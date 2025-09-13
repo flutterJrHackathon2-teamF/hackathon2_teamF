@@ -13,5 +13,9 @@ class MainActivity: FlutterFragmentActivity() {
             "expressive_loading",
             com.example.hackathon2_app.view.CustomNativeViewFactory(this)
         )
+        registry.registerViewFactory(
+            "linear_wavy_progress",
+            com.example.hackathon2_app.view.LinearWavyViewFactory(this)
+        )
     }
 }
