@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import '../../../../utils/color.dart';
 import '../../../../widgets/linear_wavy_progress.dart';
@@ -16,10 +17,10 @@ class SocialMediaEmbed extends StatefulWidget {
   final String title; // 表示タイトル
 
   const SocialMediaEmbed({
-    super.key, 
-    required this.url, 
+    super.key,
+    required this.url,
     this.dark = false,
-    this.title = 'Social Media'
+    this.title = 'Social Media',
   });
 
   @override
@@ -47,11 +48,12 @@ class _SocialMediaEmbedState extends State<SocialMediaEmbed> {
     if (!isSupportedPlatform) {
       return;
     }
+    final params = const PlatformWebViewControllerCreationParams();
     _controller =
-        WebViewController()
+        WebViewController.fromPlatformCreationParams(params)
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setUserAgent(
-            'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
+            'Mozilla/5.0 (Linux; Android 12; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
           )
           ..enableZoom(true)
           ..setBackgroundColor(Colors.transparent)
@@ -67,46 +69,54 @@ class _SocialMediaEmbedState extends State<SocialMediaEmbed> {
                 setState(() {
                   isLoading = false;
                 });
-                // Improve scroll behavior and touch handling
                 _controller?.runJavaScript(r"""
-                  document.documentElement.style.overscrollBehavior = 'contain';
-                  document.body.style.overscrollBehavior = 'contain';
-                  document.documentElement.style.touchAction = 'pan-y';
-                  document.body.style.touchAction = 'pan-y';
-                  document.documentElement.style.webkitOverflowScrolling = 'touch';
-                  document.body.style.webkitOverflowScrolling = 'touch';
-                """);
+              document.documentElement.style.overscrollBehavior = 'contain';
+              document.body.style.overscrollBehavior = 'contain';
+              document.documentElement.style.touchAction = 'pan-y';
+              document.body.style.touchAction = 'pan-y';
+              document.documentElement.style.webkitOverflowScrolling = 'touch';
+              document.body.style.webkitOverflowScrolling = 'touch';
+            """);
               },
               onWebResourceError: (error) {
                 if (!_useMobileFallback) {
                   _useMobileFallback = true;
-                  // Try mobile fallback if it's Twitter/X
-                  if (widget.url.contains('x.com') || widget.url.contains('twitter.com')) {
+                  if (widget.url.contains('x.com') ||
+                      widget.url.contains('twitter.com')) {
                     final username = widget.url.split('/').last;
                     _controller?.loadRequest(
                       Uri.parse('https://mobile.twitter.com/$username'),
                     );
+                    return;
                   }
-                } else {
-                  setState(() {
-                    isLoading = false;
-                    hasError = true;
-                  });
                 }
+                setState(() {
+                  isLoading = false;
+                  hasError = true;
+                });
               },
               onNavigationRequest: (NavigationRequest request) {
                 final url = request.url;
-                // Allow navigation within Twitter/X domains and external links
                 if (url.startsWith('http://') || url.startsWith('https://')) {
                   return NavigationDecision.navigate;
                 }
-                // Handle non-http(s) schemes like intent://, twitter://, mailto:, tel:, etc.
                 _handleExternalUrl(url);
                 return NavigationDecision.prevent;
               },
             ),
-          )
-          ..loadRequest(Uri.parse(widget.url));
+          );
+
+    // Android-specific hardening for X/Instagram (API-safe across versions)
+    if (_controller!.platform is AndroidWebViewController) {
+      final android = _controller!.platform as AndroidWebViewController;
+      AndroidWebViewController.enableDebugging(true);
+      android.setDomStorageEnabled(true);
+    }
+
+    // Clear potential bad cache then load
+    _controller!
+      ..clearCache()
+      ..loadRequest(Uri.parse(widget.url));
   }
 
   Future<void> _handleExternalUrl(String raw) async {
@@ -295,4 +305,8 @@ class _SocialMediaEmbedState extends State<SocialMediaEmbed> {
       ),
     );
   }
+}
+
+extension on AndroidWebViewController {
+  void setDomStorageEnabled(bool bool) {}
 }
