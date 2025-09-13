@@ -10,6 +10,8 @@ import os
 from datetime import datetime, timedelta
 from predictor import OnsenPredictor
 import logging
+import pytz
+from zoneinfo import ZoneInfo
 
 app = FastAPI(title="温泉来客数予測API", version="1.0.0")
 
@@ -24,37 +26,54 @@ logger = logging.getLogger(__name__)
 
 def fetch_visitor_data_from_supabase(days: int = 28) -> pd.DataFrame:
     """
-    Supabaseから来客数データを取得
+    Supabaseから来客数データを取得（タイムゾーン対応）
     
     Args:
         days: 過去何日分のデータを取得するか
         
     Returns:
-        pd.DataFrame: 来客数データ（ds, yカラム）
+        pd.DataFrame: 来客数データ（slot_5m, visitorsカラム）
     """
     try:
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=days)
+        # 日本時間で現在時刻を取得
+        jst = ZoneInfo("Asia/Tokyo")
+        now_jst = datetime.now(jst)
         
-        # Supabaseからデータを取得（テーブル名とカラム名は実際に合わせて調整）
-        response = supabase.table("visitor_data").select(
-            "datetime, visitor_count"
+        # 過去28日分の範囲をJSTで計算
+        start_jst = now_jst - timedelta(days=days)
+        
+        # JSTをUTCに変換してSupabaseに送信
+        start_utc = start_jst.astimezone(pytz.UTC)
+        end_utc = now_jst.astimezone(pytz.UTC)
+        
+        logger.info(f"JST範囲: {start_jst.strftime('%Y-%m-%d %H:%M')} - {now_jst.strftime('%Y-%m-%d %H:%M')}")
+        logger.info(f"UTC範囲: {start_utc.strftime('%Y-%m-%d %H:%M')} - {end_utc.strftime('%Y-%m-%d %H:%M')}")
+        
+        # Supabaseからvisitors_5mテーブルのデータを取得
+        response = supabase.table("visitors_5m").select(
+            "slot_5m, visitors"
         ).gte(
-            "datetime", start_date.isoformat()
+            "slot_5m", start_utc.isoformat()
         ).lte(
-            "datetime", end_date.isoformat()
-        ).order("datetime").execute()
+            "slot_5m", end_utc.isoformat()
+        ).order("slot_5m").execute()
         
         if not response.data:
             raise ValueError("データが見つかりません")
         
         # DataFrameに変換
         df = pd.DataFrame(response.data)
-        df = df.rename(columns={"datetime": "ds", "visitor_count": "y"})
-        df['ds'] = pd.to_datetime(df['ds'])
+        df['slot_5m'] = pd.to_datetime(df['slot_5m'], utc=True)  # UTC として読み込み
         
-        # 14-23時のデータのみフィルタリング
-        df = df[df['ds'].dt.hour.between(14, 23)]
+        # UTC から JST に変換
+        df['slot_5m'] = df['slot_5m'].dt.tz_convert('Asia/Tokyo')
+        
+        # 14-23時のデータのみフィルタリング（JST基準）
+        df = df[df['slot_5m'].dt.hour.between(14, 23)]
+        
+        logger.info(f"取得データ数: {len(df)}件")
+        if len(df) > 0:
+            logger.info(f"データ期間: {df['slot_5m'].min()} - {df['slot_5m'].max()}")
         
         return df
         
@@ -74,7 +93,7 @@ async def predict_visitors():
     try:
         logger.info("来客数予測開始")
         
-        # Supabaseからデータを取得
+        # Supabaseから5分毎のデータを取得
         df = fetch_visitor_data_from_supabase(days=28)
         
         if len(df) < 50:
@@ -83,10 +102,15 @@ async def predict_visitors():
                 detail="予測に必要な十分なデータがありません"
             )
         
-        # 予測実行
+        # 予測実行（5分データを1時間に集約して予測）
         predictor = OnsenPredictor()
-        predictor.train_model(df)
-        forecast = predictor.predict_next_day(df)
+        
+        # 5分データを1時間に集約
+        df_hourly = predictor.aggregate_to_hourly(df)
+        
+        # モデル学習と予測
+        predictor.train_model(df_hourly)
+        forecast = predictor.predict_next_day(df_hourly)
         
         # Flutter用にシンプルな形式で返す
         predictions = []

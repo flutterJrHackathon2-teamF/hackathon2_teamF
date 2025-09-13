@@ -1,17 +1,17 @@
 # 温泉来客数予測システム
 
 ## 概要
-温泉の来客数を時系列予測するシステムです。FacebookのProphetモデルを使用し、Supabaseから取得した過去データを基に次日14-23時の来客数を予測します。
+温泉の来客数を時系列予測するシステムです。FacebookのProphetモデルを使用し、Supabaseから取得した5分毎の過去データを1時間単位に集約して、次日14-23時の来客数を予測します。
 
 ## ファイル構成
 
 ```
-pred/
-├── predictor.py          # 予測モジュール（コア機能）
-├── onsen_api.py          # FastAPI サーバー
+predictor/
+├── predictor.py          # 予測モジュール（コア機能、5分データ集約機能付き）
+├── onsen_api.py          # FastAPI サーバー（Supabase連携）
 ├── demo.py               # 使用例デモンストレーション  
-├── data_generator.py     # テスト用データ生成
-├── onsen_visitors.csv    # サンプルデータ
+├── data_generator.py     # テスト用データ生成（1時間毎）
+├── onsen_visitors.csv    # サンプルデータ（1時間毎）
 └── README.md            # このファイル（プロジェクト概要）
 ```
 
@@ -60,12 +60,35 @@ GET /predict
 - **time**: 表示用時刻文字列
 - **visitors**: 予測来客数（小数点1桁） - グラフのY軸に使用
 
+## 主要機能
+
+### データ集約機能
+`predictor.py`の`aggregate_to_hourly`メソッドが5分毎のデータを1時間毎に自動集約:
+- 12個の5分スロットの平均値を計算
+- 欠損値は自動的に除外
+- `slot_5m`と`visitors`カラムを`ds`と`y`に変換
+
+### 予測関数
+```python
+predict_onsen_visitors(
+    csv_path=None,           # CSVファイルパス（オプション）
+    dataframe=None,          # DataFrameを直接渡す（オプション）
+    aggregate_5min=True      # 5分データを1時間に集約（デフォルト: True）
+)
+```
+
 ## システム構成
 
 ### アーキテクチャ
 ```
-Supabase DB → FastAPI → 予測モジュール → JSON レスポンス
+Supabase DB (5分毎) → FastAPI → データ集約(1時間毎) → 予測モジュール → JSON レスポンス
 ```
+
+**データフロー:**
+1. Supabaseから5分毎の来客数データ（`visitors_5m`テーブル）を取得
+2. 5分毎のデータを1時間単位に平均化して集約
+3. 集約されたデータでProphetモデルを学習
+4. 次日14-23時の1時間毎の来客数を予測
 
 ### 環境変数
 ```bash
@@ -73,16 +96,18 @@ SUPABASE_URL=your-supabase-project-url
 SUPABASE_KEY=your-supabase-anon-key
 ```
 
-### データベーススキーマ（想定）
+### データベーススキーマ
 ```sql
-CREATE TABLE visitor_data (
-    id SERIAL PRIMARY KEY,
-    datetime TIMESTAMP WITH TIME ZONE NOT NULL,
-    visitor_count INTEGER NOT NULL
+CREATE TABLE visitors_5m (
+    slot_5m TIMESTAMP WITH TIME ZONE PRIMARY KEY,
+    visitors SMALLINT NOT NULL
 );
-
-CREATE INDEX idx_visitor_data_datetime ON visitor_data(datetime);
 ```
+
+**テーブル説明:**
+- `visitors_5m`: 5分毎の来客数データを格納
+- `slot_5m`: 5分間隔のタイムスロット（タイムゾーン付きタイムスタンプ）
+- `visitors`: その5分間の来客数
 
 ## Flutter統合
 
@@ -137,7 +162,8 @@ uvicorn onsen_api:app --host 0.0.0.0 --port 8000 --workers 4
 ### データ要件
 - 過去4週間以上のデータが必要
 - データは14-23時のみ有効
-- 1時間間隔のデータを想定
+- Supabaseには5分間隔のデータを格納
+- 予測時に5分毎のデータを1時間毎に自動集約
 
 ### パフォーマンス
 - 予測処理は数秒かかる

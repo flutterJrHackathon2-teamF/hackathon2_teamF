@@ -21,7 +21,7 @@ def main():
         predictor = OnsenPredictor()
         
         # データ読み込み
-        df = predictor.load_data('onsen_visitors.csv')
+        df = predictor.load_data(csv_path='onsen_visitors.csv')
         
         # モデル学習
         predictor.train_model(df)
