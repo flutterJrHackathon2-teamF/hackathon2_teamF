@@ -16,7 +16,7 @@
 *.bin
 
 # AI/ML training data and logs
-data/
+
 datasets/
 logs/
 tensorboard/
