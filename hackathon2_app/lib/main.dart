@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hackathon2_app/data/models/stamp_data.dart';
 import 'package:hackathon2_app/router/app_router.dart';
+import 'package:hackathon2_app/utils/color.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColor.blue),
       ),
       routerConfig: AppRouter.router,
     );
