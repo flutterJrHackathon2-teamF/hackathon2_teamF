@@ -14,17 +14,20 @@ class HourlyBarChart extends ConsumerWidget {
 
     final predictionAsyncValue = ref.watch(predictionViewModelProvider);
 
-    List<double> values = predictionAsyncValue.when(
+    return predictionAsyncValue.when(
       data: (data) {
         if (data == null || data.isEmpty) {
-          return _getMockData();
+          return _buildErrorMessage('予測データが取得できませんでした');
         }
-        return data.map((prediction) => prediction.visitors).toList();
+        final values = data.map((prediction) => prediction.visitors).toList();
+        return _buildChart(values, labels, currentHour);
       },
-      loading: () => _getMockData(),
-      error: (_, __) => _getMockData(),
+      loading: () => _buildLoadingMessage(),
+      error: (_, __) => _buildErrorMessage('予測データの取得に失敗しました'),
     );
+  }
 
+  Widget _buildChart(List<double> values, List<String> labels, int currentHour) {
     return Container(
       color: const Color(0xFFEFF5F8),
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -80,7 +83,29 @@ class HourlyBarChart extends ConsumerWidget {
     );
   }
 
-  List<double> _getMockData() {
-    return [12.0, 20.0, 16.0, 18.0, 15.0, 50.0, 22.0, 5.0, 8.0, 12.0];
+  Widget _buildLoadingMessage() {
+    return Container(
+      color: const Color(0xFFEFF5F8),
+      height: 240,
+      child: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _buildErrorMessage(String message) {
+    return Container(
+      color: const Color(0xFFEFF5F8),
+      height: 240,
+      child: Center(
+        child: Text(
+          message,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+    );
   }
 }

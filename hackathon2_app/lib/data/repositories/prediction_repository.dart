@@ -44,9 +44,10 @@ class PredictionRepositoryImpl implements PredictionRepository {
 
   @override
   Future<List<VisitorPrediction>?> getPredictionData() async {
-    if (!_isBusinessHours(DateTime.now())) {
-      return null;
-    }
+    // 営業時間チェックを削除 - 24時間データ取得可能
+    // if (!_isBusinessHours(DateTime.now())) {
+    //   return null;
+    // }
 
     final cachedData = ref.read(predictionRepositoryCacheProvider);
     if (cachedData != null && cachedData.isNotEmpty) {
@@ -67,10 +68,5 @@ class PredictionRepositoryImpl implements PredictionRepository {
   @override
   void clearCache() {
     ref.read(predictionRepositoryCacheProvider.notifier).clearCache();
-  }
-
-  bool _isBusinessHours(DateTime now) {
-    final hour = now.hour;
-    return hour >= 14 && hour < 24;
   }
 }

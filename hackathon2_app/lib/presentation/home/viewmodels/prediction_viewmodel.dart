@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../data/models/visitor_prediction.dart';
 import '../../../domain/services/prediction_service.dart';
@@ -25,16 +24,12 @@ class PredictionViewModel extends _$PredictionViewModel {
     return asyncValue.when(
       data: (data) {
         if (data == null || data.isEmpty) {
-          return _getMockData();
+          return [];
         }
         return data.map((prediction) => prediction.visitors).toList();
       },
-      loading: () => _getMockData(),
-      error: (_, __) => _getMockData(),
+      loading: () => [],
+      error: (_, __) => [],
     );
-  }
-
-  List<double> _getMockData() {
-    return [12.0, 20.0, 16.0, 18.0, 15.0, 50.0, 22.0, 5.0, 8.0, 12.0];
   }
 }

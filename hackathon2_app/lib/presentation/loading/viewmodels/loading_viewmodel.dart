@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../data/repositories/visitor_repository.dart';
+import '../../../data/repositories/prediction_repository.dart';
 
 part 'loading_viewmodel.g.dart';
 
@@ -14,10 +15,14 @@ class LoadingViewModel extends _$LoadingViewModel {
 
   Future<void> _preloadData() async {
     try {
-      final repository = ref.read(visitorRepositoryProvider);
+      final visitorRepository = ref.read(visitorRepositoryProvider);
+      final predictionRepository = ref.read(predictionRepositoryProvider);
 
-      // 訪問者データを事前取得してキャッシュに保存
-      await repository.getLatestVisitorData();
+      // 並列でデータを事前取得してキャッシュに保存
+      await Future.wait([
+        visitorRepository.getLatestVisitorData(),
+        predictionRepository.getPredictionData(),
+      ]);
 
       // 追加で必要なデータがあればここで取得
       // 例：スタンプデータ、その他の初期化データなど
