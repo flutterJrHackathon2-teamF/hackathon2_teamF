@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hackathon2_app/utils/color.dart';
 import 'package:hackathon2_app/presentation/home/viewmodels/prediction_viewmodel.dart';
+import 'package:hackathon2_app/utils/color.dart';
 
 class HourlyBarChart extends ConsumerWidget {
   const HourlyBarChart({super.key});
@@ -36,51 +36,75 @@ class HourlyBarChart extends ConsumerWidget {
       color: const Color(0xFFEFF5F8),
       padding: const EdgeInsets.symmetric(vertical: 16),
       height: 240,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: List.generate(labels.length, (i) {
-            final hour = 14 + i; // 14..23
-            final isCurrent = currentHour == hour;
-            final value = values[i];
-
-            // 最大高さをベースにスケールするが、
-            // 現在の時間帯の棒だけは高さを少し余裕をもって調整する
-            final maxBarHeight = 200.0; // ラベル分を確保した最大値
-            final maxValue = values.reduce((a, b) => a > b ? a : b);
-
-            double barHeight = (value / maxValue) * maxBarHeight;
-
-            if (isCurrent && barHeight > maxBarHeight * 0.9) {
-              // 現在の棒だけは縮めてオーバーフローを防ぐ
-              barHeight = maxBarHeight * 0.9;
-            }
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('${value.toInt()}人'),
-                  Flexible(
-                    child: Container(
-                      width: 24,
-                      height: barHeight,
-                      decoration: BoxDecoration(
-                        color:
-                            isCurrent ? AppColor.primaryPurple : AppColor.blue,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(labels[i], style: const TextStyle(fontSize: 12)),
-                ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              '予測来場者数',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
-            );
-          }),
-        ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: List.generate(labels.length, (i) {
+                    final hour = 14 + i; // 14..23
+                    final isCurrent = currentHour == hour;
+                    final value = values[i];
+
+                    // 最大高さをベースにスケールするが、
+                    // 現在の時間帯の棒だけは高さを少し余裕をもって調整する
+                    final maxBarHeight = 200.0; // ラベル分を確保した最大値
+                    final maxValue = values.reduce((a, b) => a > b ? a : b);
+
+                    double barHeight = (value / maxValue) * maxBarHeight;
+
+                    if (isCurrent && barHeight > maxBarHeight * 0.9) {
+                      // 現在の棒だけは縮めてオーバーフローを防ぐ
+                      barHeight = maxBarHeight * 0.9;
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('${value.toInt()}人'),
+                          Flexible(
+                            child: Container(
+                              width: 24,
+                              height: barHeight,
+                              decoration: BoxDecoration(
+                                color:
+                                    isCurrent
+                                        ? AppColor.primaryPurple
+                                        : AppColor.blue,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(labels[i], style: const TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
