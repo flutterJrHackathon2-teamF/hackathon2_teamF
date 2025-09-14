@@ -27,7 +27,11 @@ class HourlyBarChart extends ConsumerWidget {
     );
   }
 
-  Widget _buildChart(List<double> values, List<String> labels, int currentHour) {
+  Widget _buildChart(
+    List<double> values,
+    List<String> labels,
+    int currentHour,
+  ) {
     return Container(
       color: const Color(0xFFEFF5F8),
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -58,6 +62,7 @@ class HourlyBarChart extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Text('${value.toInt()}人'),
                   Flexible(
                     child: Container(
                       width: 24,
@@ -70,10 +75,7 @@ class HourlyBarChart extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    labels[i],
-                    style: const TextStyle(fontSize: 12),
-                  ),
+                  Text(labels[i], style: const TextStyle(fontSize: 12)),
                 ],
               ),
             );
@@ -87,9 +89,7 @@ class HourlyBarChart extends ConsumerWidget {
     return Container(
       color: const Color(0xFFEFF5F8),
       height: 240,
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -100,10 +100,7 @@ class HourlyBarChart extends ConsumerWidget {
       child: Center(
         child: Text(
           message,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
+          style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
       ),
     );
