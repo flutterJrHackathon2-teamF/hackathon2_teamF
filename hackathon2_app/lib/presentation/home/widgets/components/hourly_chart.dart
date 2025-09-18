@@ -63,16 +63,16 @@ class HourlyBarChart extends ConsumerWidget {
                     final isCurrent = currentHour == hour;
                     final value = values[i];
 
-                    // 最大高さをベースにスケールするが、
-                    // 現在の時間帯の棒だけは高さを少し余裕をもって調整する
-                    final maxBarHeight = 200.0; // ラベル分を確保した最大値
-                    final maxValue = values.reduce((a, b) => a > b ? a : b);
+                    // 固定スケール（最大値での正規化はしない）
+                    const maxBarHeight = 200.0; // ラベル分を確保した最大値
+                    const maxPeople = 60.0; // 60人で満タン
+                    final pxPerPerson = maxBarHeight / maxPeople; // 60人 → 200px
 
-                    double barHeight = (value / maxValue) * maxBarHeight;
+                    double barHeight = value * pxPerPerson;
 
-                    if (isCurrent && barHeight > maxBarHeight * 0.9) {
-                      // 現在の棒だけは縮めてオーバーフローを防ぐ
-                      barHeight = maxBarHeight * 0.9;
+                    // 上限を超えないようにクランプ
+                    if (barHeight > maxBarHeight) {
+                      barHeight = maxBarHeight;
                     }
 
                     return Padding(
